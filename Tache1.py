@@ -116,14 +116,14 @@ def appliquer_chemin(aventurier, dragons, chemin):
         rencontre(aventurier, dragons)
 
 def fin_partie(aventurier, dragons):
-    if not dragons:
-        # Si tous les dragons ont été tués, la partie est gagnée
-        return 1
-    elif 'vivant' in aventurier and not aventurier['vivant']:
-        # Si l'aventurier a été tué, la partie est perdue
+    # Vérifie si l'aventurier est mort
+    if not rencontre(aventurier, dragons):
         return -1
+    # Vérifie si tous les dragons ont été tués
+    elif len(dragons) == 0:
+        return 1
+    # Si la partie continue
     else:
-        # Sinon, la partie continue
         return 0
 
 print((donjon[1][1])) 
