@@ -173,7 +173,7 @@ class Donjon:
         perso_case = self.get_case_from_tag(f"{perso_pos[0]}_{perso_pos[1]}")
         perso_case_pos = perso_case.get_positions()
 
-        image(perso_case_pos[0],perso_case_pos[1],perso.get_texture())
+        image(perso_case_pos[0], perso_case_pos[1], perso.get_texture())
 
         for d in self.get_dragons():
             d_pos = d.get_position()
@@ -181,7 +181,7 @@ class Donjon:
             d_case = self.get_case_from_tag(f"{d_pos[0]}_{d_pos[1]}")
             d_case_pos = d_case.get_positions()
 
-            image(d_case_pos[0],d_case_pos[1],d.get_texture())
+            image(d_case_pos[0], d_case_pos[1], d.get_texture())
 
         mise_a_jour()
 
@@ -212,7 +212,7 @@ class Donjon:
 
         for nom, personnages in self.personnages.items():
             if nom == "A":
-                position = (personnages[0]['ligne'], personnages[0]['colonne'])
+                position = (int(personnages[0]['ligne']), int(personnages[0]['colonne']))
                 niveau = personnages[0]['niveau']
         return personnage.Personnage(position, niveau)
 
@@ -222,7 +222,7 @@ class Donjon:
         for nom, personnages, in self.personnages.items():
             if nom == "D":
                 for drag in personnages:
-                    position = (drag['ligne'], drag['colonne'])
+                    position = (int(drag['ligne']), int(drag['colonne']))
                     niveau = drag['niveau']
 
                     dragons.append(dragon.Dragon(position, niveau))
@@ -234,30 +234,43 @@ class Donjon:
 
     def intention(self):
         def recherche(position, visite):
+            # Vérifie si la position actuelle contient un dragon
             for dragon in self.get_dragons():
                 if position == dragon.get_position():
+                    # Si oui, renvoie le chemin menant à cette position et le niveau du dragon
                     return [position], dragon.get_niveau()
+            # Si la position a déjà été visitée, renvoie None
             if position in visite:
                 return None
+            # Ajoute la position actuelle aux positions visitées
             visite.add(position)
+            # Liste pour stocker les résultats des recherches récursives
             resultats = []
+            # Parcourt les positions voisines connectées à la position actuelle
             for direction in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                 nouvelle_position = (position[0] + direction[0], position[1] + direction[1])
                 if self.connecte(position, nouvelle_position):
+                    # Effectue une recherche récursive à partir de la nouvelle position
                     resultat = recherche(nouvelle_position, visite)
                     if resultat is not None:
                         resultats.append(resultat)
+            # Si aucun résultat n'a été trouvé, renvoie None
             if not resultats:
                 return None
+            # Sélectionne le résultat avec le niveau de dragon le plus élevé
             niveau_max = max(resultats, key=lambda x: x[1])[1]
             resultats = [resultat for resultat in resultats if resultat[1] == niveau_max]
             chemin, niveau = random.choice(resultats)
+            # Renvoie le chemin menant à la position du dragon et son niveau
             return [position] + chemin, niveau
+
+            # Effectue une recherche récursive à partir de la position initiale de l'aventurier
 
         resultat = recherche(self.get_personnage().get_position(), set())
         if resultat is None:
             return None
         chemin, niveau = resultat
+        # Renvoie le chemin menant au dragon le plus proche avec le niveau le plus élevé
         return chemin
 
     def rencontre(self):
@@ -286,7 +299,6 @@ class Donjon:
     def pivoter(self, position):
         donjon = self.affiche_donjon()
         case = donjon[position[0]][position[1]]
-        print(tuple(case))
         correspondances = {
             (False, True, True, False): (False, False, True, True),
             (False, True, True, True): (True, False, True, True),
@@ -305,42 +317,39 @@ class Donjon:
             (False, True, False, False): (False, False, True, False),
         }
         donjon[position[0]][position[1]] = correspondances[case]
+        print(donjon[position[0]][position[1]])
+
         self.affiche_fltk()
 
-    def connecte(self, position1, position2):
-        y1, x1 = position1
-        y2, x2 = position2
+    def connecte(self,position1, position2):
         donjon = self.affiche_donjon()
-        if not (0 <= y1 < len(donjon) and 0 <= x1 < len(donjon[y1])) or not (
-                0 <= y2 < len(donjon) and 0 <= x2 < len(donjon[y2])):
+        n = len(donjon)
+        m = len(donjon[0])
+        x1, y1 = position1
+        x2, y2 = position2
+        # Vérifie si les positions sont valides dans le donjon
+        if not (0 <= x1 < n and 0 <= y1 < m and 0 <= x2 < n and 0 <= y2 < m):
             return False
-        if abs(y1 - y2) + abs(x1 - x2) != 1:
+        # Vérifie si les positions sont adjacentes
+        if (y1 > y2 and y1 - y2 > 1) or (y2 > y1 and y2 - y1 > 1) or (x1 > x2 and x1 - x2 > 1) or (
+                x2 > x1 and x2 - x1 > 1):
             return False
-        if x1 < x2:
-            if not donjon[y1][x1][1] or not donjon[y2][x2][3]:
+        # Vérifie si les positions sont dans la même ligne
+        elif x1 == x2:
+            # Vérifie si les positions sont connectées horizontalement
+            if (donjon[x1][y1][1] == donjon[x2][y2][3] and donjon[x1][y1][1] == True) or (
+                    donjon[x1][y1][3] == donjon[x2][y2][1] and donjon[x1][y1][3] == True):
+                return True
+            else:
                 return False
-        elif x1 > x2:
-            if not donjon[y1][x1][3] or not donjon[y2][x2][1]:
+        # Vérifie si les positions sont dans la même colonne
+        elif y1 == y2:
+            # Vérifie si les positions sont connectées verticalement
+            if (donjon[x1][y1][0] == donjon[x2][y2][2] and donjon[x1][y1][0] == True) or (
+                    donjon[x1][y1][2] == donjon[x2][y2][0] and donjon[x1][y1][2] == True):
+                return True
+            else:
                 return False
-        elif y1 < y2:
-            if not donjon[y1][x1][2] or not donjon[y2][x2][0]:
-                return False
-        elif y1 > y2:
-            if not donjon[y1][x1][0] or not donjon[y2][x2][2]:
-                return False
-        if x1 < x2:
-            if not donjon[y2][x2][1] or not donjon[y1][x1][3]:
-                return False
-        elif x1 > x2:
-            if not donjon[y2][x2][3] or not donjon[y1][x1][1]:
-                return False
-        elif y1 < y2:
-            if not donjon[y2][x2][0] or not donjon[y1][x1][2]:
-                return False
-        elif y1 > y2:
-            if not donjon[y2][x2][2] or not donjon[y1][x1][0]:
-                return False
-        return True
 
     def fin_partie(self):
         if not self.rencontre():

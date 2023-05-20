@@ -17,7 +17,7 @@ class Manager:
 
         self.donjons = []
 
-        fichiers_config = glob.glob("config*.txt")
+        fichiers_config = glob.glob("donjons/config*.txt")
 
         for conf in fichiers_config:
             dj = donjon.Donjon(conf, "desert")

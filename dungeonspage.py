@@ -22,7 +22,7 @@ class Hub:
         largeur_carre = (x2 - x1) // 3
 
         # Recherche des fichiers de configuration
-        fichiers_config = glob.glob("config*.txt")
+        fichiers_config = glob.glob("donjons/config*.txt")
 
         # Détermination du nombre de donjons en fonction du nombre de fichiers trouvés
         nombre_donjons = min(len(fichiers_config),3)
