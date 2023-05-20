@@ -8,3 +8,6 @@ class Dragon:
 
     def get_niveau(self):
         return self.__niveau
+
+    def get_texture(self):
+        return "dragon.png"

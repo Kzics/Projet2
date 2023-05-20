@@ -12,6 +12,8 @@ class Manager:
         self.buttons = {}
         self.currentPage = 0
         self.lastClicked = None
+        self.playing = False
+        self.playing_donjon = None
 
         self.donjons = []
 
@@ -69,3 +71,16 @@ class Manager:
             return
 
         self.currentPage = self.currentPage - 1
+
+    def isPlaying(self):
+        return self.playing
+
+    def get_actuel_donjon(self):
+        return self.playing_donjon
+
+    def set_playing_donjon(self,dj):
+        self.playing_donjon = dj
+
+    def set_playing(self,state):
+        self.playing = state
+

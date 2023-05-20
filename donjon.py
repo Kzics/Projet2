@@ -1,8 +1,10 @@
+import djcase
 from fltk import *
 import random
 
 import dragon
 import personnage
+
 
 class Donjon:
     def __init__(self, fichier, type):
@@ -11,6 +13,7 @@ class Donjon:
         self.nom = None
         self.donjon = None
         self.type = type
+        self.cases = []
 
         self.charger(fichier)
 
@@ -112,7 +115,6 @@ class Donjon:
         return self.donjon
 
     def affiche_fltk(self):
-
         efface_tout()
 
         images = {
@@ -139,22 +141,56 @@ class Donjon:
 
         donjon = self.affiche_donjon()
 
-        temp_x = 500
-        temp_y = 200
-        tag_c = {x : 1, y : 1}
+        largeur_case = 144
+        hauteur_case = 144
+
+        nb_cases_largeur = 792 // largeur_case
+        nb_cases_hauteur = 720 // hauteur_case
+
+        marge_x = (792 - nb_cases_largeur * largeur_case) // 2 + largeur_case // 2
+        marge_y = (720 - nb_cases_hauteur * hauteur_case) // 2 + hauteur_case // 2
+
+        temp_x = marge_x
+        temp_y = marge_y
+        tag_c = {"x": 0, "y": 0}
+
         for l in donjon:
             for case in l:
                 image_path = images.get(case)
                 if image_path is not None:
-                    image(temp_x, temp_y, image_path, ancrage='center', tag= str(tag_c[x]) + "_" + str(tag_c[y]))
-                    tag_c[y] += 1
-                    temp_x += 50
+                    self.cases.append(djcase.Case(temp_x, temp_y, image_path, str(tag_c["x"]) + "_" + str(tag_c["y"])))
+                    tag_c["x"] += 1
+                    temp_x += largeur_case
 
-            temp_y += 50
-            temp_x = 500
-            tag_c[y] = 1
-            tag_c[x] += 1
+            temp_y += hauteur_case
+            temp_x = marge_x
+            tag_c["y"] += 1
+            tag_c["x"] = 0
+
+        perso = self.get_personnage()
+        perso_pos = perso.get_position()
+
+        perso_case = self.get_case_from_tag(f"{perso_pos[0]}_{perso_pos[1]}")
+        perso_case_pos = perso_case.get_positions()
+
+        image(perso_case_pos[0],perso_case_pos[1],perso.get_texture())
+
+        for d in self.get_dragons():
+            d_pos = d.get_position()
+
+            d_case = self.get_case_from_tag(f"{d_pos[0]}_{d_pos[1]}")
+            d_case_pos = d_case.get_positions()
+
+            image(d_case_pos[0],d_case_pos[1],d.get_texture())
+
         mise_a_jour()
+
+    def get_case_from_tag(self, tag) -> djcase:
+        for c in self.cases:
+            if c.get_tag() == tag:
+                return c
+
+        return None
 
     def afficher_personnages(self):
         """
@@ -252,7 +288,7 @@ class Donjon:
         case = donjon[position[0]][position[1]]
         print(tuple(case))
         correspondances = {
-            (False, True, True, False): (False, False, True,True),
+            (False, True, True, False): (False, False, True, True),
             (False, True, True, True): (True, False, True, True),
             (False, False, True, True): (True, False, False, True),
             (True, True, True, False): (False, True, True, True),

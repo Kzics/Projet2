@@ -9,5 +9,8 @@ class Personnage:
     def get_position(self):
         return self.__position
 
+    def get_texture(self):
+        return "perso.png"
+
     def montee_de_niveau(self):
         self.__niveau += 1
