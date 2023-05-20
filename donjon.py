@@ -141,16 +141,19 @@ class Donjon:
 
         temp_x = 500
         temp_y = 200
+        tag_c = {x : 1, y : 1}
         for l in donjon:
             for case in l:
                 image_path = images.get(case)
                 if image_path is not None:
-                    image(temp_x, temp_y, image_path, ancrage='center', tag='im')
+                    image(temp_x, temp_y, image_path, ancrage='center', tag= str(tag_c[x]) + "_" + str(tag_c[y]))
+                    tag_c[y] += 1
                     temp_x += 50
 
             temp_y += 50
             temp_x = 500
-
+            tag_c[y] = 1
+            tag_c[x] += 1
         mise_a_jour()
 
     def afficher_personnages(self):
