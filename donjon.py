@@ -249,21 +249,21 @@ class Donjon:
         case = donjon[position[0]][position[1]]
         print(tuple(case))
         correspondances = {
-            (False, True, True, False): (False, False, True, True),
+            (False, True, True, False): (False, False, True,True),
             (False, True, True, True): (True, False, True, True),
             (False, False, True, True): (True, False, False, True),
             (True, True, True, False): (False, True, True, True),
-            (True, True, True, True): (False, False, True, True),
-            (True, False, True, True): (True, True, True, False),
-            (True, True, False, False): (True, True, True, False),
-            (True, True, False, True): (True, True, False, False),
-            (True, False, False, True): (True, False, True, False),
-            (True, False, True, False): (True, False, True, True),
-            (False, True, False, True): (True, True, False, True),
-            (True, False, False, False): (False, False, True, False),
-            (False, True, False, False): (False, True, True, False),
-            (False, False, True, False): (True, True, False, False),
-            (False, False, False, True): (True, False, False, True)
+            (True, True, True, True): (True, True, True, True),
+            (True, False, True, True): (True, True, False, True),
+            (True, True, False, False): (False, True, True, False),
+            (True, True, False, True): (True, True, True, False),
+            (True, False, False, True): (True, True, False, False),
+            (True, False, True, False): (False, True, False, True),
+            (False, True, False, True): (True, False, True, False),
+            (False, False, True, False): (False, False, False, True),
+            (False, False, False, True): (True, False, False, False),
+            (True, False, False, False): (False, True, False, False),
+            (False, True, False, False): (False, False, True, False),
         }
         donjon[position[0]][position[1]] = correspondances[case]
         self.affiche_fltk()
