@@ -1,29 +1,23 @@
+from fltk import *
 import random
 
 import dragon
 import personnage
 
 
-class Donjon:
-    def __init__(self, fichier):
-        """
-        Initialise le donjon en chargeant les données depuis un fichier.
+# Exemple de comment marche la fct affiche_fltk
 
-        Args:
-            fichier (str): Le chemin d'accès au fichier à charger.
-        """
+class Donjon:
+    def __init__(self, fichier, type):
         self.agencement = None
         self.personnages = {}
+        self.nom = None
+        self.donjon = None
+        self.type = type
 
         self.charger(fichier)
 
     def charger(self, fichier):
-        """
-        Charge un donjon depuis un fichier texte.
-
-        Args:
-            fichier (str): Le chemin d'accès au fichier à charger.
-        """
         try:
             with open(fichier, "r", encoding='utf-8') as f:
                 contenu = f.read()
@@ -37,40 +31,33 @@ class Donjon:
             print("Le fichier n'est pas correctement formaté.")
             return
 
-        agencement = []
-        lignes = parties[0].split("\n")
-        for ligne in lignes:
-            agencement.append(list(ligne))
+        agencement = [list(ligne) for ligne in parties[0].split("\n")]
 
         self.personnages = {}
+
         infos = parties[1].split("\n")
+
+        print(infos)
+
         for info in infos:
             if len(info) == 0:
+                print("er")
                 continue
             elements = info.split()
             if len(elements) < 3:
                 print("Le fichier n'est pas correctement formaté.")
                 return
             nom = elements[0]
-            ligne = int(elements[1])
-            colonne = int(elements[2])
-            niveau = 1
-            if len(elements) > 3:
-                niveau = int(elements[3])
-
-            if nom in self.personnages:
-                self.personnages[nom].append({"ligne": ligne, "colonne": colonne, "niveau": niveau})
-            else:
-                self.personnages[nom] = [{"ligne": ligne, "colonne": colonne, "niveau": niveau}]
-
+            ligne = elements[1]
+            colonne = elements[2]
+            niveau = elements[3] if len(elements) > 3 else 1
+            if nom == "N":
+                self.nom = colonne
+                continue
+            self.personnages.setdefault(nom, []).append({"ligne": ligne, "colonne": colonne, "niveau": niveau})
         self.agencement = agencement
 
-        print(self.personnages)
-
     def afficher_agencement(self):
-        """
-        Affiche l'agencement du donjon.
-        """
         if self.agencement is None:
             print("Le donjon n'a pas été chargé.")
             return
@@ -79,17 +66,16 @@ class Donjon:
         for ligne in self.agencement:
             print("".join(ligne))
 
-    def affiche_donjon(self):
-        """
-        Affiche l'agencement du donjon en utilisant les caractères spéciaux et crée un tuple de 4 éléments pour chaque
-        caractère dans le donjon.
+    def get_type(self):
+        return self.type
 
-        Args:
-            donjon (Donjon): L'objet Donjon à afficher.
-        """
+    def affiche_donjon(self):
         if self.agencement is None:
             print("Le donjon n'a pas été chargé.")
             return
+
+        if self.donjon is not None:
+            return self.donjon
 
         salles = []
         for ligne in self.agencement:
@@ -97,30 +83,78 @@ class Donjon:
             for car in ligne:
                 if car == " ":
                     pass
-                elif car == "╔":
-                    salles_ligne.append(tuple((False, False, True, True)))
-                elif car == "╦":
-                    salles_ligne.append(tuple((True, False, True, True)))
-                elif car == "╗":
-                    salles_ligne.append(tuple((True, False, False, True)))
-                elif car == "╠":
-                    salles_ligne.append(tuple((False, True, True, False)))
-                elif car == "╬":
-                    salles_ligne.append(tuple((True, True, True, True)))
-                elif car == "╣":
-                    salles_ligne.append(tuple((True, True, False, True)))
-                elif car == "╚":
-                    salles_ligne.append(tuple((False, True, True, False)))
-                elif car == "╩":
-                    salles_ligne.append(tuple((True, True, True, False)))
-                elif car == "╝":
-                    salles_ligne.append(tuple((True, True, False, False)))
-                elif car == "║":
-                    salles_ligne.append(tuple((True, False, False, True)))
-                elif car == "═":
-                    salles_ligne.append(tuple((False, True, True, False)))
+                else:
+                    salles_ligne.append(self.get_salle(car))
             salles.append(salles_ligne)
+
+        self.donjon = salles
         return salles
+
+    def get_salle(self, car):
+        salles_dict = {
+            " ": None,
+            "╔": (False, True, True, False),
+            "╦": (False, True, True, True),
+            "╗": (False, False, True, True),
+            "╠": (True, True, True, False),
+            "╬": (True, True, True, True),
+            "╣": (True, False, True, True),
+            "╚": (True, True, False, False),
+            "╩": (True, True, False, True),
+            "╝": (True, False, False, True),
+            "║": (True, False, True, False),
+            "═": (False, True, False, True),
+            "╨": (True, False, False, False),
+            "╡": (False, True, False, False),
+            "╥": (False, False, True, False),
+            "╞": (False, False, False, True)
+        }
+        return salles_dict.get(car, None)
+
+    def get_donjon(self):
+        return self.donjon
+
+    def affiche_fltk(self):
+
+        efface_tout()
+
+        images = {
+            (False, True, True, False): "tile/desert/t1.png",
+            (False, True, True, True): "tile/desert/t8.png",
+            (False, False, True, True): "tile/desert/t2.png",
+            (True, True, True, False): "tile/desert/t7.png",
+            (True, True, True, True): "tile/desert/t9.png",
+            (True, False, True, True): "tile/desert/t5.png",
+            (True, True, False, False): "tile/desert/t4.png",
+            (True, True, False, True): "tile/desert/t6.png",
+            (True, False, False, True): "tile/desert/t3.png",
+            (True, False, True, False): "tile/desert/t11.png",
+            (False, True, False, True): "tile/desert/t10.png",
+            (True, False, False, False): "tile/desert/t12.png",
+            (False, True, False, False): "tile/desert/t13.png",
+            (False, False, True, False): "tile/desert/t14.png",
+            (False, False, False, True): "tile/desert/t15.png",
+        }
+
+        if self.agencement is None:
+            print("Le donjon n'a pas été chargé.")
+            return
+
+        donjon = self.affiche_donjon()
+
+        temp_x = 500
+        temp_y = 200
+        for l in donjon:
+            for case in l:
+                image_path = images.get(case)
+                if image_path is not None:
+                    image(temp_x, temp_y, image_path, ancrage='center', tag='im')
+                    temp_x += 50
+
+            temp_y += 50
+            temp_x = 500
+
+        mise_a_jour()
 
     def afficher_personnages(self):
         """
@@ -159,45 +193,35 @@ class Donjon:
 
         return dragons
 
+    def get_name(self):
+        return self.nom
+
     def intention(self):
-        # Fonction interne pour effectuer une recherche récursive dans le donjon
         def recherche(position, visite):
-            # Vérifie si la position actuelle contient un dragon
             for dragon in self.get_dragons():
                 if position == dragon.get_position():
-                    # Si oui, renvoie le chemin menant à cette position et le niveau du dragon
                     return [position], dragon.get_niveau()
-            # Si la position a déjà été visitée, renvoie None
             if position in visite:
                 return None
-            # Ajoute la position actuelle aux positions visitées
             visite.add(position)
-            # Liste pour stocker les résultats des recherches récursives
             resultats = []
-            # Parcourt les positions voisines connectées à la position actuelle
             for direction in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                 nouvelle_position = (position[0] + direction[0], position[1] + direction[1])
                 if self.connecte(position, nouvelle_position):
-                    # Effectue une recherche récursive à partir de la nouvelle position
                     resultat = recherche(nouvelle_position, visite)
                     if resultat is not None:
                         resultats.append(resultat)
-            # Si aucun résultat n'a été trouvé, renvoie None
             if not resultats:
                 return None
-            # Sélectionne le résultat avec le niveau de dragon le plus élevé
             niveau_max = max(resultats, key=lambda x: x[1])[1]
             resultats = [resultat for resultat in resultats if resultat[1] == niveau_max]
             chemin, niveau = random.choice(resultats)
-            # Renvoie le chemin menant à la position du dragon et son niveau
             return [position] + chemin, niveau
 
-        # Effectue une recherche récursive à partir de la position initiale de l'aventurier
         resultat = recherche(self.get_personnage().get_position(), set())
         if resultat is None:
             return None
         chemin, niveau = resultat
-        # Renvoie le chemin menant au dragon le plus proche avec le niveau le plus élevé
         return chemin
 
     def rencontre(self):
@@ -223,28 +247,39 @@ class Donjon:
         # Si l'aventurier survit à la rencontre avec les dragons, la fonction renvoie True
         return True
 
-    def pivoter(self,position):
-        rota_donjon = self.affiche_donjon()[position[0]][position[1]][-1:] + self.affiche_donjon()[position[0]][position[1]][
-                                                              :-1]  # Créer une variable qui est l'addition du dernier indice de donjon et ajouter les éléments restants de ce dernier
-        return rota_donjon
+    def pivoter(self, position):
+        donjon = self.affiche_donjon()
+        case = donjon[position[0]][position[1]]
+        print(tuple(case))
+        correspondances = {
+            (False, True, True, False): (False, False, True, True),
+            (False, True, True, True): (True, False, True, True),
+            (False, False, True, True): (True, False, False, True),
+            (True, True, True, False): (False, True, True, True),
+            (True, True, True, True): (False, False, True, True),
+            (True, False, True, True): (True, True, True, False),
+            (True, True, False, False): (True, True, True, False),
+            (True, True, False, True): (True, True, False, False),
+            (True, False, False, True): (True, False, True, False),
+            (True, False, True, False): (True, False, True, True),
+            (False, True, False, True): (True, True, False, True),
+            (True, False, False, False): (False, False, True, False),
+            (False, True, False, False): (False, True, True, False),
+            (False, False, True, False): (True, True, False, False),
+            (False, False, False, True): (True, False, False, True)
+        }
+        donjon[position[0]][position[1]] = correspondances[case]
+        self.affiche_fltk()
 
-    def connecte(self,position1,position2):
+    def connecte(self, position1, position2):
         y1, x1 = position1
         y2, x2 = position2
-
         donjon = self.affiche_donjon()
-
-        # Vérification que les coordonnées sont bien dans les limites du donjon
-        if not (0 <= y1 < len(donjon) and 0 <= x1 < len(donjon[y1])):
+        if not (0 <= y1 < len(donjon) and 0 <= x1 < len(donjon[y1])) or not (
+                0 <= y2 < len(donjon) and 0 <= x2 < len(donjon[y2])):
             return False
-        if not (0 <= y2 < len(donjon) and 0 <= x2 < len(donjon[y2])):
-            return False
-
-        # Vérification que les salles sont adjacentes
         if abs(y1 - y2) + abs(x1 - x2) != 1:
             return False
-
-        # Vérification de la connexion de la première salle vers la deuxième
         if x1 < x2:
             if not donjon[y1][x1][1] or not donjon[y2][x2][3]:
                 return False
@@ -257,8 +292,6 @@ class Donjon:
         elif y1 > y2:
             if not donjon[y1][x1][0] or not donjon[y2][x2][2]:
                 return False
-
-        # Vérification de la connexion de la deuxième salle vers la première
         if x1 < x2:
             if not donjon[y2][x2][1] or not donjon[y1][x1][3]:
                 return False
@@ -271,22 +304,12 @@ class Donjon:
         elif y1 > y2:
             if not donjon[y2][x2][2] or not donjon[y1][x1][0]:
                 return False
-
-        # Si toutes les vérifications ont été passées, les salles sont connectées
         return True
 
     def fin_partie(self):
-        # Vérifie si l'aventurier est mort
         if not self.rencontre():
             return -1
-        # Vérifie si tous les dragons ont été tués
         elif len(self.get_dragons()) == 0:
             return 1
-        # Si la partie continue
         else:
             return 0
-
-
-dj = Donjon("config.txt")
-
-print(dj.get_personnage())
