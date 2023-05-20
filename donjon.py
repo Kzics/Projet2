@@ -4,9 +4,6 @@ import random
 import dragon
 import personnage
 
-
-# Exemple de comment marche la fct affiche_fltk
-
 class Donjon:
     def __init__(self, fichier, type):
         self.agencement = None
@@ -105,9 +102,9 @@ class Donjon:
             "║": (True, False, True, False),
             "═": (False, True, False, True),
             "╨": (True, False, False, False),
-            "╡": (False, True, False, False),
+            "╡": (False, False, False, True),
             "╥": (False, False, True, False),
-            "╞": (False, False, False, True)
+            "╞": (False, True, False, False)
         }
         return salles_dict.get(car, None)
 
@@ -130,10 +127,10 @@ class Donjon:
             (True, False, False, True): "tile/desert/t3.png",
             (True, False, True, False): "tile/desert/t11.png",
             (False, True, False, True): "tile/desert/t10.png",
-            (True, False, False, False): "tile/desert/t12.png",
-            (False, True, False, False): "tile/desert/t13.png",
-            (False, False, True, False): "tile/desert/t14.png",
-            (False, False, False, True): "tile/desert/t15.png",
+            (False, False, True, False): "tile/desert/t12.png",
+            (False, False, False, True): "tile/desert/t13.png",
+            (True, False, False, False): "tile/desert/t14.png",
+            (False, True, False, False): "tile/desert/t15.png",
         }
 
         if self.agencement is None:
