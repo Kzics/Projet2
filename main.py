@@ -5,7 +5,7 @@ from manager import Manager
 from fltk import *
 
 started = False
-resolution = [900, 800]
+resolution = [800, 800]
 gameManager = Manager(resolution)
 gameManager.lancemenent()
 
