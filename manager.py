@@ -20,9 +20,9 @@ class Manager:
         fichiers_config = glob.glob("donjons/config*.txt")
 
         for conf in fichiers_config:
-            dj = donjon.Donjon(conf, "desert")
+            dj = donjon.Donjon(conf, "desert",self)
             if conf.endswith("3.txt"):
-                dj = donjon.Donjon(conf,"ice")
+                dj = donjon.Donjon(conf,"ice",self)
             self.donjons.append(dj)
 
     def lancemenent(self) -> None:

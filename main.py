@@ -19,6 +19,7 @@ while True:
 
     ev = donne_ev()
     tev = type_ev(ev)
+
     if tev == "ClicGauche":
         if not gameManager.isPlaying():
             if gameManager.getBtns()["Jouer"].checkClicked(abscisse_souris(), ordonnee_souris()):
@@ -61,6 +62,8 @@ while True:
 
                     print(chemin_liste)
 
+                    print(dj_actuel.get_personnage().get_position())
+
                     if chemin_liste is not None:
                         for i in range(len(chemin_liste) - 1):
                             case = dj_actuel.get_case_from_tag(f"{chemin_liste[i][0]}_{chemin_liste[i][1]}")
@@ -68,13 +71,11 @@ while True:
                             case_position = case.get_positions()
                             case_2_position = case_2.get_positions()
                             ligne(case_position[0], case_position[1], case_2_position[0], case_2_position[1], couleur="red")
-                    break
-    if tev == "ClicDroit":
-        dj_actuel = gameManager.get_actuel_donjon()
-        for c in gameManager.get_actuel_donjon().cases:
-            if c.est_dans_case(abscisse_souris(), ordonnee_souris()):
-                pos = c.get_tag()
-                position = c.get_tag().split("_")
+                            mise_a_jour()
 
-                print(dj_actuel.affiche_donjon()[int(position[1])][int(position[0])])
+                        print("il va",chemin_liste[len(chemin_liste)-1])
+                        dj_actuel.get_personnage().deplacement(chemin_liste[len(chemin_liste)-1])
+
+                    break
+
     mise_a_jour()
