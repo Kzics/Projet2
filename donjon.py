@@ -286,12 +286,14 @@ class Donjon:
             # Parcourt les positions voisines connectées à la position actuelle
             for direction in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                 nouvelle_position = (position[0] + direction[0], position[1] + direction[1])
-
+                if nouvelle_position[0] <0:
+                    nouvelle_position = (0,nouvelle_position[1])
+                elif nouvelle_position[1]< 0:
+                    nouvelle_position = (nouvelle_position[0],0)
                 if nouvelle_position in visite:
                     continue
 
                 if self.connecte(position, nouvelle_position):
-                    print(position,nouvelle_position)
                     # Effectue une recherche récursive à partir de la nouvelle position
                     resultat = recherche(nouvelle_position, visite)
                     if resultat is not None:
@@ -316,17 +318,26 @@ class Donjon:
 
     def connecte(self, position1, position2):
         donjon = self.affiche_donjon()
+        print(donjon)
         y1, x1 = position1
         y2, x2 = position2
 
+        num_lignes = len(donjon)
+        num_colonnes = len(donjon[0])
+
         if x1 == x2 and y1 == y2 + 1:
-            return donjon[x1][y1][3] and donjon[x2][y2][1]
-        elif x1 == x2 and y1 == y2 -1:
-            return donjon[x1][y1][1] and donjon[x2][y2][3]
+            if 0 <= x1 < num_lignes and 0 <= y1 < num_colonnes and 0 <= x2 < num_lignes and 0 <= y2 < num_colonnes:
+                return donjon[x1][y1][3] and donjon[x2][y2][1]
+        elif x1 == x2 and y1 == y2 - 1:
+            if 0 <= x1 < num_lignes and 0 <= y1 < num_colonnes and 0 <= x2 < num_lignes and 0 <= y2 < num_colonnes:
+                return donjon[x1][y1][1] and donjon[x2][y2][3]
         elif x1 == x2 + 1 and y1 == y2:
-            return donjon[x1][y1][0] and donjon[x2][y2][2]
+            if 0 <= x1 < num_lignes and 0 <= y1 < num_colonnes and 0 <= x2 < num_lignes and 0 <= y2 < num_colonnes:
+                return donjon[x1][y1][0] and donjon[x2][y2][2]
         elif x1 == x2 - 1 and y1 == y2:
-            return donjon[x1][y1][2] and donjon[x2][y2][0]
+            if 0 <= x1 < num_lignes and 0 <= y1 < num_colonnes and 0 <= x2 < num_lignes and 0 <= y2 < num_colonnes:
+                print("tt", y1, x1, y2, x2)
+                return donjon[x1][y1][2] and donjon[x2][y2][0]
         else:
             return False
 
