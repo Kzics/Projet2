@@ -1,4 +1,5 @@
 import datetime
+import sys
 import time
 from collections import deque
 
@@ -28,10 +29,16 @@ class Donjon:
         self.charger(fichier)
 
     def charger(self, fichier):
+        """
+        Charge les données à partir d'un fichier spécifié.
+        (joueur,dragons,cases)
+
+        :param fichier: Le chemin du fichier à charger.
+        :type fichier: str
+        """
         try:
             with open(fichier, "r", encoding='utf-8') as f:
                 contenu = f.read()
-                print(contenu)
         except FileNotFoundError:
             print(f"Le fichier '{fichier}' n'existe pas.")
             return
@@ -47,7 +54,6 @@ class Donjon:
 
         infos = parties[1].split("\n")
 
-        print(infos)
 
         for info in infos:
             if len(info) == 0:
@@ -66,16 +72,13 @@ class Donjon:
             self.personnages.setdefault(nom, []).append({"ligne": ligne, "colonne": colonne, "niveau": niveau})
         self.agencement = agencement
 
-    def afficher_agencement(self):
-        if self.agencement is None:
-            print("Le donjon n'a pas été chargé.")
-            return
 
-        print("Agencement du donjon :")
-        for ligne in self.agencement:
-            print("".join(ligne))
 
     def get_type(self):
+        """
+        Retourne le type du donjon (parmi ice et desert)
+        :return: str
+        """
         return self.type
 
     def drawTimer(self,posX,posY):
@@ -92,9 +95,18 @@ class Donjon:
         """
         return time.time() - self.startedTime
     def get_fichier_path(self):
+        """
+        Cette fonction retourne le fichier auquel on a chargé le donjon.
+        :return: str
+        """
         return self.fichier
 
     def reset_donjon(self):
+        """
+        Cette fonction permet de réinitialiser le donjon à son état d'origine.
+        Avant tout changement effectué par le joueur.
+        :return: void
+        """
         self.donjon = None
         self.personnage = None
         self.dragons = None
@@ -104,6 +116,11 @@ class Donjon:
         self.affiche_fltk()
 
     def affiche_donjon(self):
+        """
+        Cette fonction permet de retourner une liste de liste de la composition du donjon.
+        Sois en la recuperant directement dans le fichier config sois en recuperant dans le cache.
+        :return: list
+        """
         if self.agencement is None:
             print("Le donjon n'a pas été chargé.")
             return
@@ -125,6 +142,15 @@ class Donjon:
         return salles
 
     def get_salle(self, car):
+        """
+        Cette fonction peremt de convertir un caractère à sa case associé.
+
+        Exemple: get_salle(╔)
+        >>>(False, True, True, False)
+
+        :param car: 
+        :return: 
+        """
         salles_dict = {
             " ": None,
             "╔": (False, True, True, False),
@@ -146,27 +172,38 @@ class Donjon:
         return salles_dict.get(car, None)
 
     def get_donjon(self):
+        """
+        Cette fonction permet de recuperer la composition du donjon
+        :return: obj
+        """
         return self.donjon
 
     def affiche_fltk(self):
+        """
+        Cette fonction permet de retranscrire la composition du donjon en un affichage
+        réel dans une interface de jeu.
+
+        La fonction retranscris également le positionnement du joueur et des dragons
+        :return: void
+        """
         efface_tout()
 
         images = {
-            (False, True, True, False): "tile/desert/t1.png",
-            (False, True, True, True): "tile/desert/t8.png",
-            (False, False, True, True): "tile/desert/t2.png",
-            (True, True, True, False): "tile/desert/t7.png",
-            (True, True, True, True): "tile/desert/t9.png",
-            (True, False, True, True): "tile/desert/t5.png",
-            (True, True, False, False): "tile/desert/t4.png",
-            (True, True, False, True): "tile/desert/t6.png",
-            (True, False, False, True): "tile/desert/t3.png",
-            (True, False, True, False): "tile/desert/t11.png",
-            (False, True, False, True): "tile/desert/t10.png",
-            (False, False, True, False): "tile/desert/t12.png",
-            (False, False, False, True): "tile/desert/t13.png",
-            (True, False, False, False): "tile/desert/t14.png",
-            (False, True, False, False): "tile/desert/t15.png",
+            (False, True, True, False): f"tile/{self.type}/t1.png",
+            (False, True, True, True): f"tile/{self.type}/t8.png",
+            (False, False, True, True): f"tile/{self.type}/t2.png",
+            (True, True, True, False): f"tile/{self.type}/t7.png",
+            (True, True, True, True): f"tile/{self.type}/t9.png",
+            (True, False, True, True): f"tile/{self.type}/t5.png",
+            (True, True, False, False): f"tile/{self.type}/t4.png",
+            (True, True, False, True): f"tile/{self.type}/t6.png",
+            (True, False, False, True): f"tile/{self.type}/t3.png",
+            (True, False, True, False): f"tile/{self.type}/t11.png",
+            (False, True, False, True): f"tile/{self.type}/t10.png",
+            (False, False, True, False): f"tile/{self.type}/t12.png",
+            (False, False, False, True): f"tile/{self.type}/t13.png",
+            (True, False, False, False): f"tile/{self.type}/t14.png",
+            (False, True, False, False): f"tile/{self.type}/t15.png",
         }
 
         if self.agencement is None:
@@ -222,6 +259,12 @@ class Donjon:
         mise_a_jour()
 
     def get_case_from_tag(self, tag) -> djcase:
+        """
+        Cette fonction retourne la case associé à son tag.
+        Car chaque case à un tag associé
+        :param tag:
+        :return: str
+        """
         for c in self.cases:
             if c.get_tag() == tag:
                 return c
@@ -230,7 +273,8 @@ class Donjon:
 
     def afficher_personnages(self):
         """
-        Affiche les informations sur les personnages.
+        Permet d'afficher les informations sur le personnage et les dragons du donjon
+        :return:void
         """
         if self.personnages is None:
             print("Le donjon n'a pas été chargé.")
@@ -243,6 +287,10 @@ class Donjon:
                 print(f"Niveau: {perso['niveau']}")
 
     def get_personnage(self):
+        """
+        Permet de recuperer l'instance de l'objet Personnage
+        :return: obj
+        """
         if self.personnage is not None:
             return self.personnage
 
@@ -258,6 +306,10 @@ class Donjon:
         return self.personnage
 
     def get_dragons(self):
+        """
+        Permet de recuperer la liste des instances des dragons du donjon
+        :return: list
+        """
         if self.dragons is not None:
             return self.dragons
 
@@ -276,12 +328,27 @@ class Donjon:
         return dragons
 
     def set_dragons(self, drags):
+        """
+        Cette fonction permet de changer le nombre de dragon présent dans le donjon
+        :param drags:
+        :return: void
+        """
         self.dragons = drags
 
     def get_name(self):
+        """
+        Cette fonction permet de retourner le nom du donjon émis dans la configuration
+        :return: str
+        """
         return self.nom
 
     def intention(self):
+        """
+        Cette fonction est une fonction recursive qui prédit l'intention du joueur (son chemin)
+        Si cela est possible alors on va retourner la liste des cases pour arriver au dragon.
+        Autrement on retournera None
+        :return: list
+        """
         # Fonction interne pour effectuer une recherche récursive dans le donjon
         def recherche(position, visite):
             # Vérifie si la position actuelle contient un dragon
@@ -330,6 +397,13 @@ class Donjon:
         return chemin
 
     def connecte(self, position1, position2):
+        """
+        Cette fonction permet de verifier si 2 cases sont connecté par un passage.
+        Si cela est possible on retournera True autrement False
+        :param position1:
+        :param position2:
+        :return: bool
+        """
         donjon = self.affiche_donjon()
         print(donjon)
         y1, x1 = position1
@@ -355,6 +429,13 @@ class Donjon:
             return False
 
     def pivoter(self, position):
+        """
+        Cette fonction permet de faire pivoter une case en décalant sa composition dans le sens d'une
+        aiguille de montre.
+        Puis on actualise le donjon.
+        :param position:
+        :return:
+        """
         donjon = self.affiche_donjon()
         case = donjon[position[0]][position[1]]
         correspondances = {
@@ -380,5 +461,6 @@ class Donjon:
         self.affiche_fltk()
 
     def fin_partie(self):
+        """Cette fonction permet de verifier si le donjon est completé """
         if len(self.dragons) == 0:
-            print("dj fini")
+            sys.exit()

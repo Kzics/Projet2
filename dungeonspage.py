@@ -38,7 +38,7 @@ class Hub:
             try:
                 texte(x1 + (i + 1) * largeur_carre - largeur_carre // 2, y1 - 20, f"{donjons[start+i].get_name()}", ancrage='center')
             except IndexError:
-                print("tt")
+                print("t")
             rectangle(x1 + i * largeur_carre, y1, x1 + (i + 1) * largeur_carre, y2)
 
             temp_x = x1 + i * largeur_carre + 10

@@ -70,8 +70,6 @@ class PButton:
         return self.name
 
     def checkClicked(self, clickedX, clickedY) -> bool:
-        print(self.posX - self.longueur // 2, self.posY - self.hauteur // 2, self.posX + self.longueur // 2,
-              self.posY + self.hauteur // 2)
         if self.posY - self.hauteur // 2 < clickedY < self.posY + self.hauteur // 2:
             if self.posX - self.longueur // 2 < clickedX < self.posX + self.longueur // 2:
                 return True

@@ -63,16 +63,23 @@ class Personnage:
                     dragons.remove(dragon)
 
                     actuel_dj.set_dragons(dragons)
-                    actuel_dj.fin_partie()
 
 
                     actuel_dj.affiche_fltk()
+
+                    actuel_dj.fin_partie()
+
                 else:
                     return False
         # Si l'aventurier survit à la rencontre avec les dragons, la fonction renvoie True
         return True
 
     def dessiner(self,perso_case_pos):
+        """
+        Permet de dessiner le personnage
+        :param perso_case_pos:
+        :return:
+        """
         texte(perso_case_pos[0] + 20, perso_case_pos[1] + 20, self.get_niveau(),tag=f"text{self.tag}")
         image(perso_case_pos[0], perso_case_pos[1], self.get_texture(),tag= self.tag)
 
