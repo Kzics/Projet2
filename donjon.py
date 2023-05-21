@@ -11,6 +11,8 @@ import personnage
 class Donjon:
     def __init__(self, fichier, type,manager):
         self.dragons = None
+        self.personnage = None
+
         self.agencement = None
         self.personnages = {}
         self.nom = None
@@ -148,11 +150,11 @@ class Donjon:
         largeur_case = 144
         hauteur_case = 144
 
-        nb_cases_largeur = 792 // largeur_case
-        nb_cases_hauteur = 720 // hauteur_case
+        nb_cases_largeur = 900 // largeur_case
+        nb_cases_hauteur = 800 // hauteur_case
 
-        marge_x = (792 - nb_cases_largeur * largeur_case) // 2 + largeur_case // 2
-        marge_y = (720 - nb_cases_hauteur * hauteur_case) // 2 + hauteur_case // 2
+        marge_x = (900 - nb_cases_largeur * largeur_case) // 2 + largeur_case // 2
+        marge_y = (800 - nb_cases_hauteur * hauteur_case) // 2 + hauteur_case // 2
 
         temp_x = marge_x
         temp_y = marge_y
@@ -162,7 +164,8 @@ class Donjon:
             for case in l:
                 image_path = images.get(case)
                 if image_path is not None:
-                    self.cases.append(djcase.Case(temp_x, temp_y, image_path, str(tag_c["x"]) + "_" + str(tag_c["y"])))
+                    self.cases.append(
+                        djcase.Case(temp_x, temp_y, image_path, str(tag_c["x"]) + "_" + str(tag_c["y"]), 144, 144))
                     tag_c["x"] += 1
                     temp_x += largeur_case
 
@@ -188,7 +191,6 @@ class Donjon:
             d.dessin(d_case_pos)
 
         mise_a_jour()
-
     def get_case_from_tag(self, tag) -> djcase:
         for c in self.cases:
             if c.get_tag() == tag:
@@ -211,6 +213,9 @@ class Donjon:
                 print(f"Niveau: {perso['niveau']}")
 
     def get_personnage(self):
+        if self.personnage is not None:
+            return self.personnage
+
         position = None
         niveau = None
 
@@ -218,7 +223,9 @@ class Donjon:
             if nom == "A":
                 position = (int(personnages[0]['ligne']), int(personnages[0]['colonne']))
                 niveau = personnages[0]['niveau']
-        return personnage.Personnage(position, niveau,self.manager,"perso")
+        self.personnage = personnage.Personnage(position, niveau,self.manager,"perso")
+
+        return self.personnage
 
     def get_dragons(self):
         if self.dragons is not None:

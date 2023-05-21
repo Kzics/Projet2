@@ -39,7 +39,7 @@ class Personnage:
         # Récupère la position et le niveau de l'aventurier
         position_aventurier = self.get_position()
         niveau_aventurier = self.get_niveau()
-        dragons = self.donjon_perso.get_dragons()
+        dragons = self.gameManager.get_actuel_donjon().get_dragons()
         actuel_dj = self.gameManager.get_actuel_donjon()
 
         # Parcourt la liste des dragons
@@ -59,7 +59,7 @@ class Personnage:
 
                     actuel_dj.set_dragons(dragons)
 
-
+                    self.gameManager.get_actuel_donjon().affiche_fltk()
                 else:
                     # Sinon, l'aventurier est considéré comme mort et la fonction renvoie False
                     return False

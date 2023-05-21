@@ -2,8 +2,8 @@ from fltk import *
 
 
 class Case:
-    def __init__(self, x, y, texture, tag):
-        image(x, y, texture,ancrage='center', tag=tag)
+    def __init__(self, x, y, texture, tag, largeur, hauteur):
+        image(x, y, texture, largeur=largeur, hauteur=hauteur, ancrage='center', tag=tag)
 
         self.tag = tag
 
