@@ -1,3 +1,4 @@
+import datetime
 import time
 from collections import deque
 
@@ -14,7 +15,7 @@ class Donjon:
         self.dragons = None
         self.personnage = None
         self.fichier = fichier
-
+        self.startedTime = None
         self.agencement = None
         self.personnages = {}
         self.nom = None
@@ -77,6 +78,19 @@ class Donjon:
     def get_type(self):
         return self.type
 
+    def drawTimer(self,posX,posY):
+        """
+        Cette fonction permet de dessiner le timer dans la fenetre
+        """
+        efface("timer")
+        texte(posX, posY, datetime.datetime.utcfromtimestamp(self.getTimer()).strftime("%M:%S"), tag="timer")
+    def getTimer(self) -> float:
+        """
+        Cette fonction recupere le temps de la partie actuel.
+
+        En comparant le temps unix du lancement de la partie au temps durant la partie
+        """
+        return time.time() - self.startedTime
     def get_fichier_path(self):
         return self.fichier
 
@@ -272,8 +286,7 @@ class Donjon:
         def recherche(position, visite):
             # Vérifie si la position actuelle contient un dragon
             for dragon in self.get_dragons():
-                if int(dragon.get_niveau()) <= int(self.get_personnage().get_niveau()):
-                    if position == dragon.get_position():
+                if position == dragon.get_position():
                         # Si oui, renvoie le chemin menant à cette position et le niveau du dragon
                         return [position], dragon.get_niveau()
             # Si la position a déjà été visitée, renvoie None

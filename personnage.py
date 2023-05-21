@@ -38,7 +38,8 @@ class Personnage:
 
         self.dessiner(case.get_positions())
 
-        self.rencontre()
+        if not self.rencontre():
+            self.tuer()
 
     def rencontre(self):
         # Récupère la position et le niveau de l'aventurier
@@ -67,7 +68,6 @@ class Personnage:
 
                     actuel_dj.affiche_fltk()
                 else:
-                    # Sinon, l'aventurier est considéré comme mort et la fonction renvoie False
                     return False
         # Si l'aventurier survit à la rencontre avec les dragons, la fonction renvoie True
         return True
@@ -75,3 +75,10 @@ class Personnage:
     def dessiner(self,perso_case_pos):
         texte(perso_case_pos[0] + 20, perso_case_pos[1] + 20, self.get_niveau(),tag=f"text{self.tag}")
         image(perso_case_pos[0], perso_case_pos[1], self.get_texture(),tag= self.tag)
+
+    def tuer(self):
+        efface("perso")
+        efface("textperso")
+
+        self.gameManager.openEndMenu()
+        mise_a_jour()

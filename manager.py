@@ -1,4 +1,6 @@
+import datetime
 import glob
+import time
 
 import donjon
 from fltk import *
@@ -33,9 +35,11 @@ class Manager:
         for k,v in self.getBtns().items():
             if v.checkClicked(position[0],position[1]):
                 donjon_num = str(k).split()[1]
-                self.get_donjons()[int(donjon_num)-1].affiche_fltk()
+                dj = self.get_donjons()[int(donjon_num)-1]
+                dj.affiche_fltk()
                 self.playing = True
-                self.set_playing_donjon(self.get_donjons()[int(donjon_num)-1])
+                self.set_playing_donjon(dj)
+                dj.startedTime = time.time()
 
 
 
@@ -57,6 +61,29 @@ class Manager:
     def getBtns(self) -> dict:
         return self.buttons
 
+
+    def openEndMenu(self):
+        efface_tout()
+
+        rectangle(self.resolution[0] / 2 + 300, self.resolution[1] / 2 + 200, 100, 200)
+
+        texte(self.resolution[0] * 0.25, self.resolution[1] * 0.3, "Vous avez perdu !",taille=40)
+
+        texte(self.resolution[0] * 0.2
+                , self.resolution[1] * 0.5, f"Temps : ")
+        self.get_actuel_donjon().drawTimer(self.resolution[0] * 0.35, self.resolution[1] * 0.5)
+
+
+        againBtn = PButton("Rejouer", 250, 450, self.resolution, "rejouer")
+        menuBtn = PButton("Menu", 550, 450, self.resolution, "menu")
+        #
+        partiesBtn = PButton("Parties", 550, 250, self.resolution, "parties")
+        self.getBtns()[partiesBtn.getName()] = partiesBtn
+
+        self.getBtns()[againBtn.getName()] = againBtn
+        self.getBtns()[menuBtn.getName()] = menuBtn
+
+    
     def get_donjon_btns(self):
         return list(filter(lambda x: x.startswith("Rentrer"), self.getBtns()))
 

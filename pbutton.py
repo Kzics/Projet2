@@ -48,7 +48,7 @@ class PButton:
         self.tempX = self.posX  # Ajout de cette ligne pour initialiser self.tempX
         efface(f"txt{self.name}")
         efface(f"btn{self.name}")
-        texte(self.tempX, self.posY, self.text, taille="50", ancrage="center", tag=f"txt{self.name}")
+        texte(self.tempX, self.posY, self.text, taille="30", ancrage="center", tag=f"txt{self.name}")
 
         self.longueur, self.hauteur = taille_texte(self.text, taille=50)
 
