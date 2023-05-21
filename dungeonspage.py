@@ -6,6 +6,8 @@ from pbutton import PButton
 
 class Hub:
     def __init__(self, resolution, donjons, manager,start):
+        manager.set_is_at_hub(True)
+
         efface_tout()
 
         marge_haut = 200  # Ajuste cette valeur pour définir la marge supérieure

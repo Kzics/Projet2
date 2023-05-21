@@ -14,15 +14,16 @@ class Manager:
         self.lastClicked = None
         self.playing = False
         self.playing_donjon = None
+        self.is_at_hub = True
 
         self.donjons = []
 
         fichiers_config = glob.glob("donjons/config*.txt")
 
         for conf in fichiers_config:
-            dj = donjon.Donjon(conf, "desert",self)
+            dj = donjon.Donjon(conf, "desert", self)
             if conf.endswith("3.txt"):
-                dj = donjon.Donjon(conf,"ice",self)
+                dj = donjon.Donjon(conf, "ice", self)
             self.donjons.append(dj)
 
     def lancemenent(self) -> None:
@@ -78,9 +79,14 @@ class Manager:
     def get_actuel_donjon(self):
         return self.playing_donjon
 
-    def set_playing_donjon(self,dj):
+    def set_playing_donjon(self, dj):
         self.playing_donjon = dj
 
-    def set_playing(self,state):
+    def set_playing(self, state):
         self.playing = state
 
+    def set_is_at_hub(self,state):
+        self.is_at_hub = state
+
+    def is_at_hub(self):
+        return self.is_at_hub

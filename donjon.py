@@ -1,3 +1,4 @@
+import time
 from collections import deque
 
 import djcase
@@ -20,6 +21,7 @@ class Donjon:
         self.type = type
         self.cases = []
         self.manager = manager
+        self.playing = True
 
         self.charger(fichier)
 
@@ -47,7 +49,6 @@ class Donjon:
 
         for info in infos:
             if len(info) == 0:
-                print("er")
                 continue
             elements = info.split()
             if len(elements) < 3:
@@ -74,6 +75,15 @@ class Donjon:
 
     def get_type(self):
         return self.type
+
+    def reset_donjon(self):
+        self.donjon = None
+        self.personnage = None
+        self.dragons = None
+        
+        texte(0,0,"",ancrage='center')
+
+        self.affiche_fltk()
 
     def affiche_donjon(self):
         if self.agencement is None:
@@ -156,7 +166,7 @@ class Donjon:
         marge_x = (900 - nb_cases_largeur * largeur_case) // 2 + largeur_case // 2
         marge_y = (800 - nb_cases_hauteur * hauteur_case) // 2 + hauteur_case // 2
 
-        temp_x = marge_x
+        temp_x = marge_x-55
         temp_y = marge_y
         tag_c = {"x": 0, "y": 0}
 
@@ -170,7 +180,7 @@ class Donjon:
                     temp_x += largeur_case
 
             temp_y += hauteur_case
-            temp_x = marge_x
+            temp_x = marge_x-55
             tag_c["y"] += 1
             tag_c["x"] = 0
 
@@ -337,9 +347,6 @@ class Donjon:
         self.affiche_fltk()
 
     def fin_partie(self):
-        if not self.rencontre():
-            return -1
-        elif len(self.get_dragons()) == 0:
-            return 1
-        else:
-            return 0
+        if len(self.dragons) == 0:
+            print("dj fini")
+

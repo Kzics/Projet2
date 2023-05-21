@@ -8,9 +8,16 @@ class Personnage:
         self.gameManager = gameManager
         self.donjon_perso = gameManager.get_actuel_donjon()
         self.tag = tag
+        self.chemin_possible = None
 
     def get_niveau(self):
         return self.__niveau
+
+    def set_chemin_possible(self,chemin):
+        self.chemin_possible = chemin
+
+    def get_chemin_possible(self):
+        return self.chemin_possible
 
     def get_position(self):
         return self.__position
@@ -30,8 +37,6 @@ class Personnage:
         efface(self.tag)
 
         self.dessiner(case.get_positions())
-
-        print("hh",case.get_positions())
 
         self.rencontre()
 
@@ -54,12 +59,13 @@ class Personnage:
                     # Si le niveau du dragon est inférieur ou égal à celui de l'aventurier,
                     # le dragon est retiré de la liste et le niveau de l'aventurier est incrémenté de 1
                     self.montee_de_niveau()
-                    print("monté de niveau ")
                     dragons.remove(dragon)
 
                     actuel_dj.set_dragons(dragons)
+                    actuel_dj.fin_partie()
 
-                    self.gameManager.get_actuel_donjon().affiche_fltk()
+
+                    actuel_dj.affiche_fltk()
                 else:
                     # Sinon, l'aventurier est considéré comme mort et la fonction renvoie False
                     return False
