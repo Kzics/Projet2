@@ -147,8 +147,8 @@ class Donjon:
 
         donjon = self.affiche_donjon()
 
-        largeur_case = 144
-        hauteur_case = 144
+        largeur_case = 130
+        hauteur_case = 130
 
         nb_cases_largeur = 900 // largeur_case
         nb_cases_hauteur = 800 // hauteur_case
@@ -165,7 +165,7 @@ class Donjon:
                 image_path = images.get(case)
                 if image_path is not None:
                     self.cases.append(
-                        djcase.Case(temp_x, temp_y, image_path, str(tag_c["x"]) + "_" + str(tag_c["y"]), 144, 144))
+                        djcase.Case(temp_x, temp_y, image_path, str(tag_c["x"]) + "_" + str(tag_c["y"]), largeur_case, hauteur_case))
                     tag_c["x"] += 1
                     temp_x += largeur_case
 
