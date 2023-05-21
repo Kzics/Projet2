@@ -10,9 +10,10 @@ import personnage
 
 
 class Donjon:
-    def __init__(self, fichier, type,manager):
+    def __init__(self, fichier, type, manager):
         self.dragons = None
         self.personnage = None
+        self.fichier = fichier
 
         self.agencement = None
         self.personnages = {}
@@ -76,12 +77,15 @@ class Donjon:
     def get_type(self):
         return self.type
 
+    def get_fichier_path(self):
+        return self.fichier
+
     def reset_donjon(self):
         self.donjon = None
         self.personnage = None
         self.dragons = None
-        
-        texte(0,0,"",ancrage='center')
+
+        texte(0, 0, "", ancrage='center')
 
         self.affiche_fltk()
 
@@ -166,7 +170,7 @@ class Donjon:
         marge_x = (900 - nb_cases_largeur * largeur_case) // 2 + largeur_case // 2
         marge_y = (800 - nb_cases_hauteur * hauteur_case) // 2 + hauteur_case // 2
 
-        temp_x = marge_x-55
+        temp_x = marge_x - 55
         temp_y = marge_y
         tag_c = {"x": 0, "y": 0}
 
@@ -175,12 +179,13 @@ class Donjon:
                 image_path = images.get(case)
                 if image_path is not None:
                     self.cases.append(
-                        djcase.Case(temp_x, temp_y, image_path, str(tag_c["x"]) + "_" + str(tag_c["y"]), largeur_case, hauteur_case))
+                        djcase.Case(temp_x, temp_y, image_path, str(tag_c["x"]) + "_" + str(tag_c["y"]), largeur_case,
+                                    hauteur_case))
                     tag_c["x"] += 1
                     temp_x += largeur_case
 
             temp_y += hauteur_case
-            temp_x = marge_x-55
+            temp_x = marge_x - 55
             tag_c["y"] += 1
             tag_c["x"] = 0
 
@@ -201,6 +206,7 @@ class Donjon:
             d.dessin(d_case_pos)
 
         mise_a_jour()
+
     def get_case_from_tag(self, tag) -> djcase:
         for c in self.cases:
             if c.get_tag() == tag:
@@ -233,7 +239,7 @@ class Donjon:
             if nom == "A":
                 position = (int(personnages[0]['ligne']), int(personnages[0]['colonne']))
                 niveau = personnages[0]['niveau']
-        self.personnage = personnage.Personnage(position, niveau,self.manager,"perso")
+        self.personnage = personnage.Personnage(position, niveau, self.manager, "perso")
 
         return self.personnage
 
@@ -249,13 +255,13 @@ class Donjon:
                     position = (int(drag['ligne']), int(drag['colonne']))
                     niveau = drag['niveau']
 
-                    dragons.append(dragon.Dragon(position, niveau,count))
+                    dragons.append(dragon.Dragon(position, niveau, count))
                     count += 1
 
         self.dragons = dragons
         return dragons
 
-    def set_dragons(self,drags):
+    def set_dragons(self, drags):
         self.dragons = drags
 
     def get_name(self):
@@ -266,9 +272,10 @@ class Donjon:
         def recherche(position, visite):
             # Vérifie si la position actuelle contient un dragon
             for dragon in self.get_dragons():
-                if position == dragon.get_position():
-                    # Si oui, renvoie le chemin menant à cette position et le niveau du dragon
-                    return [position], dragon.get_niveau()
+                if int(dragon.get_niveau()) <= int(self.get_personnage().get_niveau()):
+                    if position == dragon.get_position():
+                        # Si oui, renvoie le chemin menant à cette position et le niveau du dragon
+                        return [position], dragon.get_niveau()
             # Si la position a déjà été visitée, renvoie None
             if position in visite:
                 return None
@@ -279,10 +286,12 @@ class Donjon:
             # Parcourt les positions voisines connectées à la position actuelle
             for direction in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                 nouvelle_position = (position[0] + direction[0], position[1] + direction[1])
+
                 if nouvelle_position in visite:
                     continue
 
                 if self.connecte(position, nouvelle_position):
+                    print(position,nouvelle_position)
                     # Effectue une recherche récursive à partir de la nouvelle position
                     resultat = recherche(nouvelle_position, visite)
                     if resultat is not None:
@@ -309,9 +318,10 @@ class Donjon:
         donjon = self.affiche_donjon()
         y1, x1 = position1
         y2, x2 = position2
+
         if x1 == x2 and y1 == y2 + 1:
             return donjon[x1][y1][3] and donjon[x2][y2][1]
-        elif x1 == x2 and y1 == y2 - 1:
+        elif x1 == x2 and y1 == y2 -1:
             return donjon[x1][y1][1] and donjon[x2][y2][3]
         elif x1 == x2 + 1 and y1 == y2:
             return donjon[x1][y1][0] and donjon[x2][y2][2]
@@ -319,7 +329,6 @@ class Donjon:
             return donjon[x1][y1][2] and donjon[x2][y2][0]
         else:
             return False
-
 
     def pivoter(self, position):
         donjon = self.affiche_donjon()
@@ -349,4 +358,3 @@ class Donjon:
     def fin_partie(self):
         if len(self.dragons) == 0:
             print("dj fini")
-

@@ -75,7 +75,6 @@ class PButton:
         if self.posY - self.hauteur // 2 < clickedY < self.posY + self.hauteur // 2:
             if self.posX - self.longueur // 2 < clickedX < self.posX + self.longueur // 2:
                 return True
-        print("oui")
         return False
 
 

@@ -6,7 +6,7 @@ from pbutton import PButton
 
 class Hub:
     def __init__(self, resolution, donjons, manager,start):
-        manager.set_is_at_hub(True)
+        manager.set_is_at_hub(False)
 
         efface_tout()
 
@@ -53,7 +53,7 @@ class Hub:
                     if image_number <= 15:
                         try:
                             image_path = f"tile/{donjons[start + i].get_type()}/t{image_number}.png"
-                            image(temp_x, temp_y, image_path, ancrage='nw')
+                            image(temp_x, temp_y, image_path, ancrage='nw',largeur= 144//2,hauteur=144//2)
                         except IndexError:
                             pass
                     temp_x += image_width

@@ -29,6 +29,16 @@ class Manager:
     def lancemenent(self) -> None:
         self.ouvrir_fenetre()
 
+    def entrer_donjon(self,position):
+        for k,v in self.getBtns().items():
+            if v.checkClicked(position[0],position[1]):
+                donjon_num = str(k).split()[1]
+                self.get_donjons()[int(donjon_num)-1].affiche_fltk()
+                self.playing = True
+                self.set_playing_donjon(self.get_donjons()[int(donjon_num)-1])
+
+
+
     def ouvrir_fenetre(self):
         cree_fenetre(self.resolution[0], self.resolution[1])
 
@@ -46,6 +56,9 @@ class Manager:
 
     def getBtns(self) -> dict:
         return self.buttons
+
+    def get_donjon_btns(self):
+        return list(filter(lambda x: x.startswith("Rentrer"), self.getBtns()))
 
     def setLastClicked(self, clicked):
         self.lastClicked = clicked
